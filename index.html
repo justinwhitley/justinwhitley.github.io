@@ -1,73 +1,1056 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
-    <style>
-        /* Modern CSS Reset & Variables */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Justin Whitley — Senior UX Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
 
-        :root {
-            --bg-color: #0a0a0a;
-            --text-color: #f5f5f7;
-            --accent-glow: rgba(255, 255, 255, 0.03);
-        }
+  /* ============ TOKENS ============ */
+  :root{
+    --ink:#12141c;
+    --ink-soft:#1b1e29;
+    --paper:#eceef1;
+    --paper-soft:#f6f6f3;
+    --signal:#ff5a36;
+    --indigo:#4c5fd5;
+    --on-dark:#f4f2ec;
+    --on-light:#14171f;
+    --muted:#878c98;
+    --muted-dark:#9a9eac;
+    --line:rgba(20,23,31,0.13);
+    --line-dark:rgba(244,242,236,0.16);
+    --display:'Space Grotesk',sans-serif;
+    --body:'Source Serif 4',serif;
+    --mono:'JetBrains Mono',monospace;
+    --ease:cubic-bezier(.16,.84,.44,1);
+  }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--on-light);
+    font-family:var(--body);
+    font-size:17px;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  img,svg{display:block;max-width:100%;}
+  a{color:inherit;text-decoration:none;}
+  ul{list-style:none;}
+  .container{
+    width:100%;
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+  section{position:relative;}
 
-        /* Subtle background detail for a modern depth */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            z-index: 1;
-            pointer-events: none;
-        }
+  /* ============ TYPE UTILITIES ============ */
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--signal);
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:7px;height:7px;
+    background:var(--signal);
+    border-radius:1px;
+    display:inline-block;
+    transform:rotate(45deg);
+  }
+  h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.01em;}
+  .h2{font-size:clamp(30px,4vw,46px);line-height:1.08;margin-bottom:20px;}
+  .lede{font-family:var(--body);font-size:18px;color:#41454e;max-width:540px;}
 
-        /* Centered Text Styling */
-        .title {
-            font-size: clamp(2.5rem, 8vw, 5rem); /* Scales beautifully on mobile and desktop */
-            font-weight: 300;
-            letter-spacing: -0.03em;
-            text-transform: lowercase;
-            z-index: 2;
-            opacity: 0;
-            animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+  /* ============ SCROLL PROGRESS ============ */
+  #progress{
+    position:fixed;top:0;left:0;height:3px;width:0%;
+    background:var(--signal);
+    z-index:1000;
+    transition:width .08s linear;
+  }
 
-        /* Smooth fade-in animation on load */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
+  /* ============ FLOATING NAV ============ */
+  #nav{
+    position:fixed;
+    top:22px;left:50%;
+    transform:translateX(-50%);
+    z-index:900;
+    display:flex;
+    align-items:center;
+    gap:30px;
+    padding:14px 28px;
+    border-radius:999px;
+    background:rgba(18,20,28,0);
+    border:1px solid rgba(244,242,236,0);
+    backdrop-filter:blur(0px);
+    transition:background .45s var(--ease), border-color .45s var(--ease), box-shadow .45s var(--ease), padding .45s var(--ease), backdrop-filter .45s var(--ease);
+  }
+  #nav.scrolled{
+    background:rgba(18,20,28,0.82);
+    border:1px solid var(--line-dark);
+    box-shadow:0 12px 30px -10px rgba(0,0,0,.45);
+    backdrop-filter:blur(14px);
+    padding:11px 26px;
+  }
+  .nav-mark{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--on-dark);
+    letter-spacing:.04em;
+    white-space:nowrap;
+    display:flex;align-items:center;gap:8px;
+  }
+  .nav-mark span{color:var(--signal);}
+  .nav-links{display:flex;gap:22px;}
+  .nav-links a{
+    font-family:var(--mono);
+    font-size:12.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--muted-dark);
+    position:relative;
+    padding-bottom:3px;
+    transition:color .25s ease;
+    white-space:nowrap;
+  }
+  .nav-links a::after{
+    content:'';
+    position:absolute;left:0;bottom:0;
+    width:0%;height:1px;
+    background:var(--signal);
+    transition:width .3s var(--ease);
+  }
+  .nav-links a:hover, .nav-links a.active{color:var(--on-dark);}
+  .nav-links a.active::after{width:100%;}
+  .nav-resume{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--ink);
+    background:var(--on-dark);
+    padding:8px 16px;
+    border-radius:999px;
+    white-space:nowrap;
+    transition:background .25s ease, transform .25s ease;
+  }
+  .nav-resume:hover{background:var(--signal);color:var(--on-dark);transform:translateY(-1px);}
+
+  @media (max-width:760px){
+    #nav{gap:16px;padding:12px 18px;}
+    .nav-links{gap:13px;}
+    .nav-links a{font-size:10.5px;}
+    .nav-resume{padding:7px 12px;font-size:10.5px;}
+  }
+  @media (max-width:560px){
+    .nav-mark{display:none;}
+  }
+
+  /* ============ HERO ============ */
+  .hero{
+    background:var(--ink);
+    color:var(--on-dark);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:140px 0 80px;
+    overflow:hidden;
+    position:relative;
+  }
+  .hero-blob{
+    position:absolute;
+    top:-10%;right:-10%;
+    width:60vw;height:60vw;
+    max-width:760px;max-height:760px;
+    border-radius:50%;
+    background:radial-gradient(circle at 40% 40%, rgba(255,90,54,.22), transparent 70%);
+    filter:blur(10px);
+    animation:drift 22s ease-in-out infinite alternate;
+    pointer-events:none;
+  }
+  .hero-blob.b2{
+    top:auto;bottom:-20%;left:-15%;right:auto;
+    width:46vw;height:46vw;
+    background:radial-gradient(circle at 60% 60%, rgba(76,95,213,.22), transparent 70%);
+    animation-duration:28s;
+    animation-delay:-6s;
+  }
+  @keyframes drift{
+    0%{transform:translate(0,0) scale(1);}
+    100%{transform:translate(-4%,5%) scale(1.08);}
+  }
+  .hero-inner{
+    position:relative;
+    z-index:2;
+  }
+  .hero-eyebrow{
+    font-family:var(--mono);
+    font-size:12.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--signal);
+    margin-bottom:26px;
+    opacity:0;
+    animation:rise .8s var(--ease) .1s forwards;
+  }
+  .hero h1{
+    font-size:clamp(48px,9vw,108px);
+    line-height:.96;
+    letter-spacing:-.02em;
+    opacity:0;
+    animation:rise .9s var(--ease) .25s forwards;
+  }
+  .hero .role{
+    font-family:var(--display);
+    font-weight:500;
+    font-size:clamp(20px,2.6vw,30px);
+    color:var(--muted-dark);
+    margin-top:18px;
+    opacity:0;
+    animation:rise .9s var(--ease) .4s forwards;
+  }
+  .hero .role em{color:var(--on-dark);font-style:normal;font-weight:600;}
+  .hero p.lede{
+    color:#c7c9d1;
+    margin-top:28px;
+    font-size:19px;
+    max-width:560px;
+    opacity:0;
+    animation:rise .9s var(--ease) .55s forwards;
+  }
+  .hero-actions{
+    display:flex;gap:18px;align-items:center;flex-wrap:wrap;
+    margin-top:40px;
+    opacity:0;
+    animation:rise .9s var(--ease) .7s forwards;
+  }
+  @keyframes rise{
+    from{opacity:0;transform:translateY(18px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .btn{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    padding:15px 26px;
+    border-radius:999px;
+    display:inline-flex;align-items:center;gap:10px;
+    transition:transform .3s var(--ease), background .3s ease, color .3s ease, border-color .3s ease;
+  }
+  .btn-solid{background:var(--signal);color:var(--ink);}
+  .btn-solid:hover{transform:translateY(-2px);background:var(--on-dark);}
+  .btn-ghost{border:1px solid var(--line-dark);color:var(--on-dark);}
+  .btn-ghost:hover{border-color:var(--on-dark);transform:translateY(-2px);}
+  .btn-ghost.dark{border:1px solid var(--line);color:var(--on-light);}
+  .btn-ghost.dark:hover{border-color:var(--on-light);}
+
+  .hero-badge{
+    position:absolute;
+    right:60px;bottom:60px;
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:.06em;
+    color:var(--on-dark);
+    border:1px solid var(--line-dark);
+    border-radius:14px;
+    padding:16px 18px;
+    background:rgba(244,242,236,.03);
+    backdrop-filter:blur(6px);
+    line-height:1.7;
+    z-index:3;
+    transition:transform .15s ease-out;
+    display:none;
+  }
+  .hero-badge .dot{color:var(--signal);}
+  @media (min-width:900px){ .hero-badge{display:block;} }
+
+  .scroll-cue{
+    position:absolute;
+    bottom:36px;left:32px;
+    display:flex;flex-direction:column;align-items:center;
+    gap:8px;
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.1em;
+    color:var(--muted-dark);
+    z-index:3;
+  }
+  .scroll-cue .line{
+    width:1px;height:34px;
+    background:var(--line-dark);
+    overflow:hidden;
+    position:relative;
+  }
+  .scroll-cue .line::after{
+    content:'';
+    position:absolute;top:-100%;left:0;
+    width:100%;height:100%;
+    background:var(--signal);
+    animation:cue 1.8s ease-in-out infinite;
+  }
+  @keyframes cue{
+    0%{top:-100%;} 50%{top:100%;} 100%{top:100%;}
+  }
+
+  /* ============ MARQUEE ============ */
+  .marquee{
+    background:var(--ink-soft);
+    border-top:1px solid var(--line-dark);
+    border-bottom:1px solid var(--line-dark);
+    overflow:hidden;
+    white-space:nowrap;
+    padding:18px 0;
+  }
+  .marquee-track{
+    display:inline-flex;
+    animation:scroll-left 32s linear infinite;
+  }
+  .marquee span{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted-dark);
+    padding:0 22px;
+    display:inline-flex;align-items:center;gap:22px;
+  }
+  .marquee span b{color:var(--on-dark);font-weight:500;}
+  .marquee span::after{content:'•';color:var(--signal);margin-left:22px;}
+  @keyframes scroll-left{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+  .marquee:hover .marquee-track{animation-play-state:paused;}
+
+  /* ============ REVEAL ============ */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease), transform .7s var(--ease);}
+  .reveal.in-view{opacity:1;transform:translateY(0);}
+  .reveal-delay-1.in-view{transition-delay:.08s;}
+  .reveal-delay-2.in-view{transition-delay:.16s;}
+
+  /* ============ WORK ============ */
+  .work{padding:140px 0 100px;background:var(--paper);}
+  .work-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap;margin-bottom:90px;}
+  .work-head .h2{margin-bottom:0;max-width:560px;}
+
+  .project{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:64px;
+    align-items:center;
+    padding:64px 0;
+    border-top:1px solid var(--line);
+  }
+  .project:first-of-type{border-top:1px solid var(--line);}
+  .project.flip .project-visual{order:2;}
+  .project.flip .project-text{order:1;}
+
+  .project-visual{position:relative;}
+  .mockup-frame{
+    position:relative;
+    aspect-ratio:4/3;
+    width:100%;
+    background:var(--paper-soft);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    color:var(--proj-accent, var(--signal));
+    transition:transform .45s var(--ease), box-shadow .45s var(--ease);
+  }
+  .mockup-frame:hover{
+    transform:translateY(-6px);
+    box-shadow:0 30px 50px -28px rgba(20,23,31,.28);
+    cursor:crosshair;
+  }
+  .mockup-frame svg{width:100%;height:100%;}
+
+  .corner{
+    position:absolute;width:22px;height:22px;
+    border-color:var(--proj-accent, var(--signal));
+    opacity:0;
+    transition:opacity .3s ease, transform .3s ease;
+  }
+  .corner.tl{top:10px;left:10px;border-top:2px solid;border-left:2px solid;transform:translate(6px,6px);}
+  .corner.tr{top:10px;right:10px;border-top:2px solid;border-right:2px solid;transform:translate(-6px,6px);}
+  .corner.bl{bottom:10px;left:10px;border-bottom:2px solid;border-left:2px solid;transform:translate(6px,-6px);}
+  .corner.br{bottom:10px;right:10px;border-bottom:2px solid;border-right:2px solid;transform:translate(-6px,-6px);}
+  .mockup-frame:hover .corner{opacity:1;transform:translate(0,0);}
+
+  .img-caption{
+    margin-top:14px;
+    display:flex;justify-content:space-between;
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .img-caption .tag{color:var(--proj-accent, var(--signal));}
+
+  .project-text .meta{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+  .project-text h3{font-size:clamp(24px,3vw,32px);margin-bottom:16px;line-height:1.15;}
+  .project-text p{color:#4a4e57;font-size:16.5px;max-width:480px;margin-bottom:26px;}
+  .case-link{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:8px;
+    border-bottom:1px solid var(--on-light);
+    padding-bottom:4px;
+    transition:gap .25s ease, color .25s ease, border-color .25s ease;
+  }
+  .case-link svg{width:14px;height:14px;transition:transform .25s ease;}
+  .case-link:hover{gap:13px;color:var(--proj-accent, var(--signal));border-color:var(--proj-accent, var(--signal));}
+
+  @media (max-width:860px){
+    .project, .project.flip{grid-template-columns:1fr;gap:30px;}
+    .project.flip .project-visual, .project.flip .project-text{order:initial;}
+    .work-head{margin-bottom:56px;}
+    .project{padding:48px 0;}
+  }
+
+  /* ============ ABOUT ============ */
+  .about{
+    background:var(--ink);
+    color:var(--on-dark);
+    padding:140px 0;
+  }
+  .about .eyebrow{color:var(--signal);}
+  .about-grid{
+    display:grid;
+    grid-template-columns:0.85fr 1.15fr;
+    gap:80px;
+  }
+  .about-portrait{
+    position:relative;
+    aspect-ratio:3/4;
+    border-radius:18px;
+    background:linear-gradient(155deg, #20232f, #15171f);
+    border:1px solid var(--line-dark);
+    overflow:hidden;
+    display:flex;
+    align-items:flex-end;
+  }
+  .about-portrait svg{position:absolute;inset:0;width:100%;height:100%;}
+  .about-portrait .label{
+    position:relative;z-index:2;
+    width:100%;
+    padding:20px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--muted-dark);
+    background:linear-gradient(to top, rgba(18,20,28,.85), transparent);
+  }
+  .about-text p{color:#cfd1d8;font-size:17.5px;margin-bottom:22px;max-width:600px;}
+  .about-text p:last-child{margin-bottom:0;}
+  .pull{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(22px,2.6vw,30px);
+    color:var(--on-dark);
+    border-left:2px solid var(--signal);
+    padding-left:24px;
+    margin:36px 0;
+    max-width:520px;
+    line-height:1.3;
+  }
+  @media (max-width:860px){
+    .about-grid{grid-template-columns:1fr;gap:44px;}
+    .about-portrait{max-width:280px;}
+  }
+
+  /* ============ EXPERIENCE / RESUME ============ */
+  .experience{background:var(--paper);padding:140px 0 60px;}
+  .exp-grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:80px;align-items:start;}
+
+  .timeline{border-top:1px solid var(--line);}
+  .company-block{margin-bottom:6px;}
+  .company-block:first-child{border-top:none;}
+  .company-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    gap:16px;
+    padding:22px 0 14px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:6px;
+  }
+  .company-head h3{font-family:var(--display);font-size:21px;font-weight:600;}
+  .company-head .tenure{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--signal);
+    white-space:nowrap;
+  }
+  .timeline-item{
+    display:grid;
+    grid-template-columns:140px 1fr;
+    gap:28px;
+    padding:26px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .timeline-item .when{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--muted);
+    letter-spacing:.03em;
+    padding-top:3px;
+  }
+  .timeline-item .when b{display:block;color:var(--signal);font-weight:500;}
+  .timeline-item h4{font-family:var(--display);font-size:19px;font-weight:600;margin-bottom:6px;}
+  .timeline-item .company{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;display:block;}
+  .timeline-item p{color:#4a4e57;font-size:15.5px;max-width:480px;}
+
+  @media (max-width:600px){
+    .timeline-item{grid-template-columns:1fr;gap:8px;}
+  }
+
+  .resume-card{
+    background:var(--ink);
+    color:var(--on-dark);
+    border-radius:18px;
+    padding:38px 32px;
+    position:sticky;
+    top:120px;
+  }
+  .resume-sheet{
+    background:var(--paper-soft);
+    border-radius:10px;
+    padding:22px;
+    margin-bottom:26px;
+    position:relative;
+    overflow:hidden;
+  }
+  .resume-sheet .ln{height:7px;border-radius:3px;background:var(--line);margin-bottom:10px;}
+  .resume-sheet .ln.w60{width:60%;}
+  .resume-sheet .ln.w80{width:80%;}
+  .resume-sheet .ln.w40{width:40%;background:var(--signal);opacity:.5;}
+  .resume-sheet .ln:last-child{margin-bottom:0;}
+  .resume-card h3{font-size:22px;margin-bottom:10px;}
+  .resume-card p{color:#c7c9d1;font-size:15px;margin-bottom:24px;}
+  .resume-card .btn-solid{width:100%;justify-content:center;}
+  .resume-card .skills{
+    margin-top:26px;
+    display:flex;flex-wrap:wrap;gap:8px;
+  }
+  .resume-card .skills span{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    border:1px solid var(--line-dark);
+    border-radius:999px;
+    padding:6px 12px;
+    color:var(--muted-dark);
+  }
+  @media (max-width:860px){
+    .exp-grid{grid-template-columns:1fr;gap:50px;}
+    .resume-card{position:static;}
+  }
+
+  /* ============ FOOTER ============ */
+  footer{
+    background:var(--ink);
+    color:var(--on-dark);
+    padding:90px 0 36px;
+    margin-top:60px;
+  }
+  .footer-top{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    flex-wrap:wrap;gap:40px;
+    padding-bottom:50px;
+    border-bottom:1px solid var(--line-dark);
+  }
+  .footer-top h2{font-size:clamp(28px,4vw,44px);max-width:480px;margin-bottom:18px;}
+  .footer-top p{color:#c7c9d1;max-width:380px;}
+  .footer-links{display:flex;flex-direction:column;gap:12px;}
+  .footer-links a{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:var(--muted-dark);
+    transition:color .25s ease;
+  }
+  .footer-links a:hover{color:var(--signal);}
+  .footer-bottom{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:14px;
+    padding-top:28px;
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--muted-dark);
+    letter-spacing:.03em;
+  }
+
+  /* ============ REDUCED MOTION ============ */
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+    .reveal{opacity:1;transform:none;}
+  }
+</style>
 </head>
 <body>
 
-    <h1 class="title">Justin Whitley Portfolio.</h1>
+<div id="progress"></div>
+
+<nav id="nav">
+  <a href="#top" class="nav-mark">JUSTIN <span>·</span> WHITLEY</a>
+  <ul class="nav-links">
+    <li><a href="#work" data-link="work">Work</a></li>
+    <li><a href="#about" data-link="about">About</a></li>
+    <li><a href="#experience" data-link="experience">Experience</a></li>
+  </ul>
+  <a href="#resume" class="nav-resume" data-link="resume">Résumé</a>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="hero-blob"></div>
+  <div class="hero-blob b2"></div>
+
+  <div class="container hero-inner">
+    <div class="hero-eyebrow">PORTFOLIO — UPDATED 2026</div>
+    <h1>Justin Whitley</h1>
+    <p class="role">Senior <em>UX Designer</em> — fintech &amp; operations</p>
+    <p class="lede">I design for fintech and operations-focused product teams, drawing on nearly two decades as a software engineer to build interfaces that are both usable and buildable.</p>
+    <div class="hero-actions">
+      <a href="#work" class="btn btn-solid">View Selected Work</a>
+      <a href="#resume" class="btn btn-ghost">Download Résumé</a>
+    </div>
+  </div>
+
+  <div class="hero-badge" id="heroBadge">
+    <span class="dot">◆</span> ROLE: SENIOR UX<br>
+    <span class="dot">◆</span> EXP: 20+ YEARS<br>
+    <span class="dot">◆</span> BASE: NASHVILLE, TN
+  </div>
+
+  <div class="scroll-cue">
+    <span>SCROLL</span>
+    <div class="line"></div>
+  </div>
+</header>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span><b>User Research</b> • <b>Design Systems</b> • <b>Interaction Design</b> • <b>Accessibility</b> • <b>Prototyping</b> • <b>Design Strategy</b> • <b>Team Leadership</b></span>
+    <span><b>User Research</b> • <b>Design Systems</b> • <b>Interaction Design</b> • <b>Accessibility</b> • <b>Prototyping</b> • <b>Design Strategy</b> • <b>Team Leadership</b></span>
+  </div>
+</div>
+
+<!-- ============ WORK ============ -->
+<section class="work" id="work">
+  <div class="container">
+    <div class="work-head reveal">
+      <div>
+        <div class="eyebrow">Selected Work</div>
+        <h2 class="h2">A few projects I'd talk about for hours.</h2>
+      </div>
+      <p class="lede">Four case studies — replace these placeholders with your own screenshots, write-ups, and links.</p>
+    </div>
+
+    <!-- Project 1 -->
+    <article class="project reveal" style="--proj-accent:var(--signal);">
+      <div class="project-visual">
+        <div class="mockup-frame">
+          <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.5" y="0.5" width="399" height="299" rx="13" stroke="currentColor" stroke-opacity="0.3"/>
+            <circle cx="24" cy="26" r="3.5" fill="currentColor" opacity="0.4"/>
+            <circle cx="36" cy="26" r="3.5" fill="currentColor" opacity="0.4"/>
+            <circle cx="48" cy="26" r="3.5" fill="currentColor" opacity="0.4"/>
+            <rect x="300" y="18" width="80" height="16" rx="8" stroke="currentColor" stroke-opacity="0.3"/>
+            <rect x="20" y="56" width="100" height="220" rx="6" stroke="currentColor" stroke-opacity="0.25"/>
+            <rect x="138" y="56" width="242" height="92" rx="8" fill="currentColor" opacity="0.12"/>
+            <rect x="138" y="160" width="242" height="22" rx="4" stroke="currentColor" stroke-opacity="0.3"/>
+            <rect x="138" y="194" width="242" height="22" rx="4" stroke="currentColor" stroke-opacity="0.3"/>
+            <rect x="138" y="228" width="242" height="22" rx="4" stroke="currentColor" stroke-opacity="0.3"/>
+          </svg>
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        </div>
+        <div class="img-caption">
+          <span>Project visual — replace with 1200×900 screenshot</span>
+          <span class="tag">Fintech</span>
+        </div>
+      </div>
+      <div class="project-text">
+        <div class="meta">Role: Senior UX Designer · Platform: iOS, Android</div>
+        <h3>Northwind Mobile Banking Redesign</h3>
+        <p>Rebuilt onboarding and account flows for a digital bank serving over two million customers, simplifying identity verification and cutting signup abandonment with clearer progressive disclosure.</p>
+        <a href="#" class="case-link">View case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </article>
+
+    <!-- Project 2 -->
+    <article class="project flip reveal" style="--proj-accent:var(--indigo);">
+      <div class="project-visual">
+        <div class="mockup-frame">
+          <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.5" y="0.5" width="399" height="299" rx="13" stroke="currentColor" stroke-opacity="0.3"/>
+            <rect x="20" y="22" width="180" height="14" rx="7" stroke="currentColor" stroke-opacity="0.3"/>
+            <rect x="300" y="18" width="80" height="22" rx="11" fill="currentColor" opacity="0.15"/>
+            <g stroke="currentColor" stroke-opacity="0.28">
+              <rect x="20" y="58" width="46" height="36" rx="4"/>
+              <rect x="76" y="58" width="46" height="36" rx="4"/>
+              <rect x="132" y="58" width="46" height="36" rx="4"/>
+              <rect x="188" y="58" width="46" height="36" rx="4"/>
+              <rect x="244" y="58" width="46" height="36" rx="4"/>
+              <rect x="300" y="58" width="46" height="36" rx="4" fill="currentColor" fill-opacity="0.18"/>
+              <rect x="20" y="104" width="46" height="36" rx="4"/>
+              <rect x="76" y="104" width="46" height="36" rx="4" fill="currentColor" fill-opacity="0.18"/>
+              <rect x="132" y="104" width="46" height="36" rx="4"/>
+              <rect x="188" y="104" width="46" height="36" rx="4"/>
+              <rect x="244" y="104" width="46" height="36" rx="4"/>
+              <rect x="300" y="104" width="46" height="36" rx="4"/>
+            </g>
+            <rect x="20" y="166" width="326" height="100" rx="8" stroke="currentColor" stroke-opacity="0.3"/>
+            <rect x="36" y="182" width="160" height="12" rx="6" fill="currentColor" opacity="0.18"/>
+            <rect x="36" y="206" width="220" height="10" rx="5" fill="currentColor" opacity="0.12"/>
+          </svg>
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        </div>
+        <div class="img-caption">
+          <span>Project visual — replace with 1200×900 screenshot</span>
+          <span class="tag">Operations</span>
+        </div>
+      </div>
+      <div class="project-text">
+        <div class="meta">Role: Senior UX Designer · Platform: Internal Web</div>
+        <h3>Meridian Fulfillment Ops Console</h3>
+        <p>Redesigned the dashboard fulfillment teams use to monitor and resolve order exceptions, replacing a dense spreadsheet-like interface with a guided triage flow that cut average resolution time and shortened training for new hires.</p>
+        <a href="#" class="case-link">View case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </article>
+
+    <!-- Project 3 -->
+    <article class="project reveal" style="--proj-accent:var(--signal);">
+      <div class="project-visual">
+        <div class="mockup-frame">
+          <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.5" y="0.5" width="399" height="299" rx="13" stroke="currentColor" stroke-opacity="0.3"/>
+            <rect x="20" y="22" width="120" height="14" rx="7" stroke="currentColor" stroke-opacity="0.3"/>
+            <g stroke="currentColor" stroke-opacity="0.3">
+              <rect x="20" y="58" width="110" height="68" rx="8"/>
+              <rect x="145" y="58" width="110" height="68" rx="8" fill="currentColor" fill-opacity="0.15"/>
+              <rect x="270" y="58" width="110" height="68" rx="8"/>
+              <rect x="20" y="142" width="110" height="68" rx="8"/>
+              <rect x="145" y="142" width="110" height="68" rx="8"/>
+              <rect x="270" y="142" width="110" height="68" rx="8" fill="currentColor" fill-opacity="0.15"/>
+            </g>
+            <rect x="20" y="228" width="360" height="14" rx="4" stroke="currentColor" stroke-opacity="0.25"/>
+            <rect x="20" y="252" width="220" height="10" rx="3" fill="currentColor" opacity="0.15"/>
+          </svg>
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        </div>
+        <div class="img-caption">
+          <span>Project visual — replace with 1200×900 screenshot</span>
+          <span class="tag">Operations</span>
+        </div>
+      </div>
+      <div class="project-text">
+        <div class="meta">Role: Design Systems Lead · Tools: Figma, Storybook</div>
+        <h3>Lumen Design System</h3>
+        <p>Built and led adoption of a shared component library across six internal product teams, replacing duplicated UI patterns with documented, accessible components and a contribution model designers actually used.</p>
+        <a href="#" class="case-link">View case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </article>
+
+    <!-- Project 4 -->
+    <article class="project flip reveal" style="--proj-accent:var(--indigo);">
+      <div class="project-visual">
+        <div class="mockup-frame">
+          <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.5" y="0.5" width="399" height="299" rx="13" stroke="currentColor" stroke-opacity="0.3"/>
+            <rect x="20" y="22" width="180" height="14" rx="7" stroke="currentColor" stroke-opacity="0.3"/>
+            <rect x="20" y="56" width="360" height="100" rx="8" fill="currentColor" opacity="0.14"/>
+            <rect x="36" y="72" width="140" height="12" rx="6" fill="currentColor" opacity="0.25"/>
+            <rect x="36" y="96" width="90" height="22" rx="11" fill="currentColor" opacity="0.3"/>
+            <g stroke="currentColor" stroke-opacity="0.3">
+              <rect x="20" y="172" width="110" height="92" rx="8"/>
+              <rect x="145" y="172" width="110" height="92" rx="8" fill="currentColor" fill-opacity="0.15"/>
+              <rect x="270" y="172" width="110" height="92" rx="8"/>
+            </g>
+          </svg>
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        </div>
+        <div class="img-caption">
+          <span>Project visual — replace with 1200×900 screenshot</span>
+          <span class="tag">Fintech</span>
+        </div>
+      </div>
+      <div class="project-text">
+        <div class="meta">Role: Senior UX Designer · Platform: Web</div>
+        <h3>Ledger Expense Reporting Tool</h3>
+        <p>Rebuilt the expense submission and approval flow used across finance operations, simplifying receipt capture and multi-level approvals to cut average submission time and reduce rejected reports.</p>
+        <a href="#" class="case-link">View case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="eyebrow reveal">About</div>
+    <div class="about-grid">
+      <div class="about-portrait reveal">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+          <rect width="300" height="400" fill="#191c26"/>
+          <circle cx="150" cy="160" r="64" fill="#232735"/>
+          <rect x="70" y="250" width="160" height="120" rx="60" fill="#232735"/>
+          <g stroke="#3a3f50" stroke-width="1">
+            <line x1="0" y1="80" x2="300" y2="80"/>
+            <line x1="0" y1="320" x2="300" y2="320"/>
+            <line x1="100" y1="0" x2="100" y2="400"/>
+            <line x1="200" y1="0" x2="200" y2="400"/>
+          </g>
+        </svg>
+        <div class="label">Portrait placeholder — swap for a real photo</div>
+      </div>
+      <div class="about-text">
+        <h2 class="h2 reveal">Hi, I'm Justin.</h2>
+        <p class="reveal">I'm a Senior UX Designer with nearly fourteen years and eight months at Amazon, where I've spent the last several years designing for fintech and operations-focused product teams. My path here wasn't traditional — I started as a software developer, and the years I spent building the systems before I started designing them gave me a perspective most designers don't have: I know exactly what it takes to ship what I'm proposing.</p>
+        <p class="reveal">My approach centers on understanding the problem before reaching for a screen. I spend as much time in stakeholder interviews, usability studies, and operational data as I do in Figma, because the best solutions for complex financial and back-office systems usually come from reframing the question rather than polishing the wrong answer. I've worked closely with engineers, product managers, and operations teams throughout my career, and that overlap is still where I do my best work.</p>
+        <div class="pull reveal">"Good design should be invisible — and easier to build, because I've been the one building it."</div>
+        <p class="reveal">Outside of work, I mentor early-career designers making the same jump from engineering into design, and I'm slowly working through every hiking trail within a few hours of Nashville. I'm currently looking for my next Senior or Staff-level role, helping a fintech or operations team build the kind of design culture that outlasts any single project.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPERIENCE + RESUME ============ -->
+<section class="experience" id="experience">
+  <div class="container">
+    <div class="eyebrow reveal">Experience</div>
+    <h2 class="h2 reveal">Where I've worked.</h2>
+
+    <div class="exp-grid">
+      <div class="timeline reveal">
+
+        <div class="company-block">
+          <div class="company-head">
+            <h3>Amazon</h3>
+            <span class="tenure">14 yrs 8 mo</span>
+          </div>
+
+          <div class="timeline-item">
+            <div class="when"><b>Current</b>2 yrs</div>
+            <div>
+              <h4>Senior UX Designer</h4>
+              <span class="company">Amazon</span>
+              <p>Lead UX design for fintech and operations-focused programs, partnering with engineering and product teams across multiple business lines.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="when">2 yrs 3 mo</div>
+            <div>
+              <h4>User Experience Designer II</h4>
+              <span class="company">Amazon</span>
+              <p>Designed end-to-end experiences for internal operations tooling, translating complex workflows into interfaces frontline teams could learn in minutes.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="when">2 yrs 5 mo</div>
+            <div>
+              <h4>Programmer / Analyst II</h4>
+              <span class="company">Amazon</span>
+              <p>Built and maintained internal tools and data systems, working closely with operations teams to understand how software decisions affected daily work.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="when">2 yrs 4 mo</div>
+            <div>
+              <h4>Programmer / Analyst I</h4>
+              <span class="company">Amazon</span>
+              <p>Developed and supported applications for internal business units, with an early focus on usability that eventually pulled me toward design.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="when">3 yrs 2 mo</div>
+            <div>
+              <h4>ACES Developer</h4>
+              <span class="company">Amazon</span>
+              <p>Built tools supporting Amazon's continuous-improvement initiatives, automating processes and surfacing data to help teams make faster decisions.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="when">2 yrs 11 mo</div>
+            <div>
+              <h4>Programmer / Analyst</h4>
+              <span class="company">Amazon</span>
+              <p>Started at Amazon writing and maintaining internal applications — the first step in a fourteen-year journey from engineering into design.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="company-block">
+          <div class="company-head">
+            <h3>Windstream</h3>
+            <span class="tenure">5 yrs</span>
+          </div>
+
+          <div class="timeline-item">
+            <div class="when">5 yrs</div>
+            <div>
+              <h4>Developer II</h4>
+              <span class="company">Windstream</span>
+              <p>Built and maintained web applications and internal tools, developing a foundation in software engineering that would later inform my design work.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="company-block">
+          <div class="company-head">
+            <h3>Art Source International</h3>
+            <span class="tenure">1 yr</span>
+          </div>
+
+          <div class="timeline-item">
+            <div class="when">1 yr</div>
+            <div>
+              <h4>Web Developer</h4>
+              <span class="company">Art Source International</span>
+              <p>Designed and built websites for small business clients — my first job out of school, and the start of a career split between code and design.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="resume-card reveal" id="resume">
+        <div class="resume-sheet">
+          <div class="ln w80"></div>
+          <div class="ln w60"></div>
+          <div class="ln w40"></div>
+        </div>
+        <h3>Get the full résumé</h3>
+        <p>Complete work history, education, and tools — in one PDF you can pass along to a hiring team.</p>
+        <a href="#" class="btn btn-solid" download>Download Résumé (PDF)</a>
+        <div class="skills">
+          <span>Figma</span>
+          <span>Design Systems</span>
+          <span>User Research</span>
+          <span>Prototyping</span>
+          <span>Accessibility</span>
+          <span>Front-End Development</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <h2>Let's work together.</h2>
+        <p>Open to Senior and Staff-level UX roles, advisory work, and the occasional good conversation about fintech and operations design.</p>
+      </div>
+      <div class="footer-links">
+        <a href="mailto:hello@justinwhitley.design">hello@justinwhitley.design</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">Dribbble</a>
+        <a href="#">Reading List</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Justin Whitley. Built as a portfolio template.</span>
+      <span>Nashville, TN</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- Scroll progress + floating nav state ----
+  const nav = document.getElementById('nav');
+  const progress = document.getElementById('progress');
+
+  function onScroll(){
+    const scrollY = window.scrollY;
+    nav.classList.toggle('scrolled', scrollY > 80);
+
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+    progress.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // ---- Active nav link tracking ----
+  const sections = ['work','about','experience','resume'].map(id => document.getElementById(id)).filter(Boolean);
+  const links = Array.from(document.querySelectorAll('.nav-links a, .nav-resume'));
+
+  function setActive(){
+    let current = null;
+    const offset = window.innerHeight * 0.35;
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if(rect.top <= offset && rect.bottom > offset){
+        current = sec.id;
+      }
+    });
+    links.forEach(l => l.classList.toggle('active', l.dataset.link === current));
+  }
+  window.addEventListener('scroll', setActive, {passive:true});
+  setActive();
+
+  // ---- Reveal on scroll ----
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in-view');
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(el => io.observe(el));
+
+  // ---- Hero badge parallax ----
+  const hero = document.querySelector('.hero');
+  const badge = document.getElementById('heroBadge');
+  if(hero && badge && window.matchMedia('(prefers-reduced-motion: no-preference)').matches){
+    hero.addEventListener('mousemove', (e) => {
+      const rect = hero.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      badge.style.transform = `translate(${x*16}px, ${y*16}px)`;
+    });
+  }
+</script>
 
 </body>
 </html>
